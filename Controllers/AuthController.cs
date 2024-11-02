@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VimaV2.Models;  // Ajuste o namespace para o modelo de User
 using VimaV2.Database;
 using VimaV2.Util;
+using VimaV2.DTOs;
 
 namespace VimaV2.Controllers
 {
@@ -21,17 +22,17 @@ namespace VimaV2.Controllers
 
         // POST: api/auth/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] User user)
+        public async Task<IActionResult> Login([FromBody] LoginDTO login)
         {
-            if (user == null || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Senha))
+            if (login == null || string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Senha))
             {
                 return BadRequest("Email e senha são obrigatórios.");
             }
 
             var usuarioEncontrado = await _dbContext.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == user.Email);
+                .FirstOrDefaultAsync(u => u.Email == login.Email);
 
-            if (usuarioEncontrado == null || usuarioEncontrado.Senha != user.Senha)
+            if (usuarioEncontrado == null || usuarioEncontrado.Senha != login.Senha)
             {
                 return BadRequest("Email ou senha incorretos.");
             }
