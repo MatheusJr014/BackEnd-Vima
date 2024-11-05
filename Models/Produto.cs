@@ -24,8 +24,6 @@ namespace VimaV2.Models
 
         public List<string> Tamanhos { get; set; }
 
-        public List<string> Imagens { get; set; }
-
         [Url]
         public string ImageURL { get; set; }
     }
