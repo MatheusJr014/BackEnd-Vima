@@ -9,6 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using VimaV2.Util;
+using VimaV2.Controllers;
+using VimaV2.Services;
+using VimaV2.Repositories;
 
 namespace VimaV2
 {
@@ -30,6 +33,23 @@ namespace VimaV2
                 options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.Parse("8.0.37-mysql")));
 
             builder.Services.AddScoped<VimaV2DbContext>();
+
+            //Controllers
+            builder.Services.AddScoped<ProdutosController>();
+            builder.Services.AddScoped<CarrinhoController>();
+            builder.Services.AddScoped<ContatoController>();
+            builder.Services.AddScoped<AuthController>();
+            builder.Services.AddScoped<UsuariosController>();
+
+            //Services
+            builder.Services.AddScoped<ProdutoService>();
+
+            //Repositories
+            builder.Services.AddScoped<ProdutoRepository>();
+
+
+
+
 
             builder.Services.AddAuthentication(options =>
             {
