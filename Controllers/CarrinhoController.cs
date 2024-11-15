@@ -80,7 +80,7 @@ namespace VimaV2.Controllers
         }
 
 
-
+        // PUT: api/carrinho/update/{id}
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateCarrinho(int id, [FromBody] Carrinho carrinho)
         {
@@ -99,60 +99,7 @@ namespace VimaV2.Controllers
                 return Problem(ex.Message);
             }
         }
-        /*
 
-
-        // PUT: api/carrinho/update/{id}
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateCarrinho(int id, [FromBody] Carrinho carrinho)
-        {
-            try
-            {
-                var carrinhoEncontrado = await _dbContext.Carrinhos.FindAsync(id);
-                if (carrinhoEncontrado == null)
-                {
-                    return NotFound();
-                }
-
-                // Atualiza as propriedades se não forem nulas ou inválidas
-                if (carrinho.Quantidade != default(int) && carrinho.Quantidade > 0)
-                {
-                    carrinhoEncontrado.Quantidade = carrinho.Quantidade;
-                }
-
-                if (!string.IsNullOrWhiteSpace(carrinho.Tamanhos))
-                {
-                    carrinhoEncontrado.Tamanhos = carrinho.Tamanhos;
-                }
-
-                if (!string.IsNullOrWhiteSpace(carrinho.Product))
-                {
-                    carrinhoEncontrado.Product = carrinho.Product;
-                }
-
-                if (carrinho.Preco != default(decimal) && carrinho.Preco > 0)
-                {
-                    carrinhoEncontrado.Preco = carrinho.Preco;
-                }
-
-                if (!string.IsNullOrWhiteSpace(carrinho.ImageURL))
-                {
-                    carrinhoEncontrado.ImageURL = carrinho.ImageURL;
-                }
-
-                await _dbContext.SaveChangesAsync();
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-       
-
-        */
     }
         
 }

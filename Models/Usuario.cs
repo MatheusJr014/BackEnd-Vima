@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace VimaV2.Models
 {
-    public class User
+    public class Usuario
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
@@ -14,8 +14,8 @@ namespace VimaV2.Models
         public string Email { get; set; }
         public string Senha { get; set; }
 
-        private User() { }
-        public User(string nome, string sobrenome, string email, string senha)
+        public Usuario() { }
+        public Usuario(string nome, string sobrenome, string email, string senha)
         {
             this.Nome = nome;
             this.Sobrenome = sobrenome;

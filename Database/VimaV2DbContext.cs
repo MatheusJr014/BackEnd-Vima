@@ -5,7 +5,7 @@ namespace VimaV2.Database
 {
     public partial class VimaV2DbContext : DbContext
     {
-        public DbSet<User> Usuarios { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Contato> Contatos { get; set; }
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Carrinho> Carrinhos { get; set; }
