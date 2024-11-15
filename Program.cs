@@ -37,16 +37,17 @@ namespace VimaV2
             //Controllers
             builder.Services.AddScoped<ProdutosController>();
             builder.Services.AddScoped<CarrinhoController>();
-            builder.Services.AddScoped<ContatoController>();
+            builder.Services.AddScoped<ContatosController>();
             builder.Services.AddScoped<AuthController>();
             builder.Services.AddScoped<UsuariosController>();
 
             //Services
             builder.Services.AddScoped<ProdutoService>();
+            builder.Services.AddScoped<ContatoService>();
 
             //Repositories
             builder.Services.AddScoped<ProdutoRepository>();
-
+            builder.Services.AddScoped<ContatoRepository>();
 
 
 

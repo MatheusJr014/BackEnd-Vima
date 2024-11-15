@@ -29,7 +29,7 @@ namespace VimaV2.Models
         [StringLength(500)]
         public string Description { get; set; }
 
-        private Contato() { }
+        public Contato() { }
 
         public Contato(string name, string sobrenome, string email, string assunto, string description)
         {

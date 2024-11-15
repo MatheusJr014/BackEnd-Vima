@@ -48,6 +48,8 @@ namespace VimaV2.Controllers
             throw new NotImplementedException();
         }
 
+
+        //[Get por ID]
         [HttpGet("{id}")]
         public ActionResult<ProdutoDTO> GetProdutoById(int id)
         {
@@ -60,6 +62,8 @@ namespace VimaV2.Controllers
 
             return Ok(produto);  // Retorna 200 OK com o ProdutoDTO
         }
+
+        //[DELETE]
 
         [HttpDelete("delete/{id}")]
         public IActionResult DeleteProduto(int id)
