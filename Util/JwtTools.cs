@@ -8,7 +8,7 @@ namespace VimaV2.Util
 {
     public static class JwtTools
     {
-        public static string GerarToken(User usuario, IConfiguration configuration)
+        public static string GerarToken(Usuario usuario, IConfiguration configuration)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);

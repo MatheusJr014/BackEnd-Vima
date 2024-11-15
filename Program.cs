@@ -12,6 +12,7 @@ using VimaV2.Util;
 using VimaV2.Controllers;
 using VimaV2.Services;
 using VimaV2.Repositories;
+using VimaV2.Application;
 
 namespace VimaV2
 {
@@ -45,11 +46,13 @@ namespace VimaV2
             builder.Services.AddScoped<ProdutoService>();
             builder.Services.AddScoped<ContatoService>();
             builder.Services.AddScoped<CarrinhoService>();
+            builder.Services.AddScoped<UsuarioService>();
 
             //Repositories
             builder.Services.AddScoped<ProdutoRepository>();
             builder.Services.AddScoped<ContatoRepository>();
             builder.Services.AddScoped<CarrinhoRepository>();
+            builder.Services.AddScoped<UsuarioRepository>();
 
 
 

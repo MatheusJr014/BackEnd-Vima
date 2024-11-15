@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VimaV2.Application;
 using VimaV2.Database;
+using VimaV2.DTOs;
 using VimaV2.Models; // Ajuste o namespace para a classe User
 
 namespace VimaV2.Controllers
@@ -8,41 +10,46 @@ namespace VimaV2.Controllers
     [Route("api/[controller]")]
     public class UsuariosController : ControllerBase
     {
-        private readonly VimaV2DbContext _dbContext;
+        private readonly UsuarioService _usuarioService;
 
-        public UsuariosController(VimaV2DbContext dbContext)
+
+        public UsuariosController(UsuarioService usuarioService)
         {
-            _dbContext = dbContext;
+            _usuarioService = usuarioService; 
         }
+
+
 
         // GET: api/usuarios
         [HttpGet]
-        public IActionResult GetUsuarios()
+
+        public ActionResult<List<UsuarioDTO>> GetAll()
         {
-            var usuarios = _dbContext.Usuarios.ToList();
+            var usuarios = _usuarioService.GetAll();
             return Ok(usuarios);
         }
 
-        // POST: api/usuario
+
+        // POST: api/Usuario
         [HttpPost]
-        public IActionResult CreateUsuario([FromBody] User user)
+        public async Task<IActionResult> CreateUsuario([FromBody] UsuarioDTO usuarioDto)
         {
-            if (user == null)
+            if (usuarioDto == null)
             {
-                return BadRequest("User cannot be null.");
+                return BadRequest("Usuario não pode ser nulo.");
             }
 
-            _dbContext.Usuarios.Add(user);
-            _dbContext.SaveChanges();
-
-            return CreatedAtAction(nameof(GetUsuarioById), new { id = user.Id }, user);
+            var usuarioCriado = await _usuarioService.AddUsuarioAsync(usuarioDto);
+            return CreatedAtAction(nameof(GetUsuarioById), new { id = usuarioCriado.Id }, usuarioCriado);
         }
 
-        // GET: api/usuario/{id}
+
+        //GET POR ID
         [HttpGet("{id}")]
         public IActionResult GetUsuarioById(int id)
         {
-            var user = _dbContext.Usuarios.FirstOrDefault(u => u.Id == id);
+            var user = _usuarioService.GetUsuarioById(id); // Chama o serviço
+
             if (user == null)
             {
                 return NotFound();
