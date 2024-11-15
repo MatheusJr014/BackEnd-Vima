@@ -34,6 +34,7 @@ namespace VimaV2.Services
             return contatoDTOs;
         }
 
+        //[POST]
         public async Task<ContatoDTO> CreateContatoAsync(ContatoDTO contatoDTO)
         {
             var contato = new Contato

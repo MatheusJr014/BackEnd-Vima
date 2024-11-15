@@ -44,10 +44,12 @@ namespace VimaV2
             //Services
             builder.Services.AddScoped<ProdutoService>();
             builder.Services.AddScoped<ContatoService>();
+            builder.Services.AddScoped<CarrinhoService>();
 
             //Repositories
             builder.Services.AddScoped<ProdutoRepository>();
             builder.Services.AddScoped<ContatoRepository>();
+            builder.Services.AddScoped<CarrinhoRepository>();
 
 
 
