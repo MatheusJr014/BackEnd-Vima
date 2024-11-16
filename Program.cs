@@ -31,7 +31,12 @@ namespace VimaV2
 
             // Configuração do Banco de Dados
             builder.Services.AddDbContext<VimaV2DbContext>(options =>
-                options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.Parse("8.0.37-mysql")));
+                options.UseMySql(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    ServerVersion.Parse("8.0.37-mysql")
+                ));
+
+        
 
             builder.Services.AddScoped<VimaV2DbContext>();
 
