@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VimaV2.Models;  // Ajuste o namespace para o modelo de User
-using VimaV2.Database;
-using VimaV2.Util;
+using VimaV2.Services;
 using VimaV2.DTOs;
 
 namespace VimaV2.Controllers
@@ -11,35 +8,34 @@ namespace VimaV2.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly VimaV2DbContext _dbContext;
-        private readonly IConfiguration _configuration;
+        private readonly AuthService _authService;
 
-        public AuthController(VimaV2DbContext dbContext, IConfiguration configuration)
+        public AuthController(AuthService authService)
         {
-            _dbContext = dbContext;
-            _configuration = configuration;
+            _authService = authService;
         }
 
         // POST: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
         {
-            if (login == null || string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Senha))
+            try
             {
-                return BadRequest("Email e senha são obrigatórios.");
+                // Chama o serviço de autenticação
+                var token = await _authService.LoginAsync(login);
+                return Ok(new { token });
             }
-
-            var usuarioEncontrado = await _dbContext.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == login.Email);
-
-            if (usuarioEncontrado == null || usuarioEncontrado.Senha != login.Senha)
+            catch (UnauthorizedAccessException)
             {
-                return BadRequest("Email ou senha incorretos.");
+                // Retorna erro de autenticação
+                return Unauthorized("Email ou senha incorretos.");
             }
-
-            var token = JwtTools.GerarToken(usuarioEncontrado, _configuration);
-
-            return Ok(new { token });
+            catch (Exception ex)
+            {
+                // Retorna erro genérico
+                return BadRequest(ex.Message);
+            }
         }
+
     }
 }
