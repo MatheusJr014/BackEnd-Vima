@@ -47,34 +47,27 @@ namespace VimaV2
             builder.Services.AddScoped<ContatoService>();
             builder.Services.AddScoped<CarrinhoService>();
             builder.Services.AddScoped<UsuarioService>();
+            builder.Services.AddScoped<AuthService>();
 
             //Repositories
             builder.Services.AddScoped<ProdutoRepository>();
             builder.Services.AddScoped<ContatoRepository>();
             builder.Services.AddScoped<CarrinhoRepository>();
             builder.Services.AddScoped<UsuarioRepository>();
+            builder.Services.AddScoped<AuthRepository>();
 
 
+            
 
-
-            builder.Services.AddAuthentication(options =>
+            builder.Services.AddSingleton(provider =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    ClockSkew = TimeSpan.Zero
-                };
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                return new JwtTools(
+                    configuration["Jwt:Key"],
+                    configuration["Jwt:Issuer"],
+                    configuration["Jwt:Audience"],
+                    int.Parse(configuration["Jwt:ExpireHours"])
+                );
             });
 
             builder.Services.AddControllers().AddJsonOptions(options =>
