@@ -1,20 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using VimaV2.DTOs;
+﻿using VimaV2.DTOs;
 using VimaV2.Models;
 using VimaV2.Repositories;
+using System.Threading.Tasks;
 
 namespace VimaV2.Application
 {
-    public class UsuarioService 
+    public class UsuarioService
     {
-        private readonly UsuarioRepository _usuarioRepository; 
+        private readonly UsuarioRepository _usuarioRepository;
 
         public UsuarioService(UsuarioRepository usuarioRepository)
         {
             _usuarioRepository = usuarioRepository;
         }
 
-
+        // Método para obter todos os usuários
         public List<UsuarioDTO> GetAll()
         {
             var usuarios = _usuarioRepository.GetAll();
@@ -31,8 +31,7 @@ namespace VimaV2.Application
             return usuarioDTOs;
         }
 
-
-        // Método para adicionar um novo usuário
+        // Método para adicionar um novo usuário, com a Role definida como "User"
         public async Task<UsuarioDTO> AddUsuarioAsync(UsuarioDTO usuarioDto)
         {
             var usuario = new Usuario
@@ -40,7 +39,8 @@ namespace VimaV2.Application
                 Nome = usuarioDto.Nome,
                 Sobrenome = usuarioDto.Sobrenome,
                 Email = usuarioDto.Email,
-                Senha = usuarioDto.Senha
+                Senha = usuarioDto.Senha,
+                Role = usuarioDto.Role ?? "User" // Se o Role não for fornecido, atribui "User"
             };
 
             var usuarioCriado = await _usuarioRepository.AddAsync(usuario);
@@ -51,7 +51,8 @@ namespace VimaV2.Application
                 Nome = usuarioCriado.Nome,
                 Sobrenome = usuarioCriado.Sobrenome,
                 Email = usuarioCriado.Email,
-                Senha = usuarioCriado.Senha
+                Senha = usuarioCriado.Senha,
+                Role = usuarioCriado.Role // Atribui o Role do usuário criado
             };
         }
 

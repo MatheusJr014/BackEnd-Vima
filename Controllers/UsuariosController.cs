@@ -31,16 +31,22 @@ namespace VimaV2.Controllers
 
 
         // POST: api/Usuario
-        [HttpPost]
-        public async Task<IActionResult> CreateUsuario([FromBody] UsuarioDTO usuarioDto)
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUsuario([FromBody] UsuarioDTO usuarioDto)
         {
             if (usuarioDto == null)
             {
-                return BadRequest("Usuario não pode ser nulo.");
+                return BadRequest("Dados do usuário são obrigatórios.");
+            }
+
+            // Verifique se o modelo de dados do usuário está correto
+            if (string.IsNullOrEmpty(usuarioDto.Nome) || string.IsNullOrEmpty(usuarioDto.Email))
+            {
+                return BadRequest("Nome e Email são obrigatórios.");
             }
 
             var usuarioCriado = await _usuarioService.AddUsuarioAsync(usuarioDto);
-            return CreatedAtAction(nameof(GetUsuarioById), new { id = usuarioCriado.Id }, usuarioCriado);
+            return Ok(new { Message = "Usuário criado com sucesso.", Usuario = usuarioCriado });
         }
 
 

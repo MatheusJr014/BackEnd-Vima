@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using VimaV2.DTOs;
+using VimaV2.Models;
 using VimaV2.Services;
 
 [Authorize(Roles = "Admin")] // Garante que apenas usuários com a role "Admin" possam acessar
@@ -9,10 +10,12 @@ using VimaV2.Services;
 public class AdminController : ControllerBase
 {
     private readonly AdminService _adminService;
+    private readonly AuthService _authService; // Certifique-se de que AuthService está implementado
 
-    public AdminController(AdminService adminService)
+    public AdminController(AdminService adminService, AuthService authService)
     {
         _adminService = adminService;
+        _authService = authService; // Injeção de dependência do AuthService
     }
 
     // Endpoint para criar um novo produto
@@ -60,5 +63,36 @@ public class AdminController : ControllerBase
         }
 
         return NotFound(new { Message = "Produto não encontrado." });
+    }
+
+
+    [HttpPost("register-admin")]
+    public async Task<IActionResult> RegisterAdmin([FromBody] Usuario usuario)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Dados inválidos.");
+        }
+
+        // Define o Role como 'Admin'
+        usuario.Role = "Admin";
+
+        var resultado = await _adminService.RegisterAdminAsync(usuario);
+
+        if (resultado == null)
+        {
+            return BadRequest("Erro ao cadastrar administrador.");
+        }
+
+        return Ok(new { Message = "Administrador cadastrado com sucesso.", Usuario = resultado });
+    }
+
+
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
+    {
+        var token = await _authService.LoginAsync(loginDto);
+        return Ok(new { Token = token });
     }
 }

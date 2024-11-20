@@ -21,13 +21,15 @@ namespace VimaV2.Repositories
             return _dbContext.Produtos.ToList();
         }
 
+
+        /*
         public async Task<Produto> AddAsync(Produto produto)
         {
             _dbContext.Produtos.Add(produto);
             await _dbContext.SaveChangesAsync();
             return produto;
         }
-
+        */
         public Produto GetById(int id)
         {
             // Obtém o produto pelo ID
@@ -41,19 +43,23 @@ namespace VimaV2.Repositories
             return _dbContext.Produtos.Find(id);
         }
 
+
+        /*
         public void Delete(Produto produto)
         {
             _dbContext.Produtos.Remove(produto);
             _dbContext.SaveChanges();
         }
+        */
 
 
 
-        public async Task<Produto> UpdateAsync(Produto produto)
+        /*public async Task<Produto> UpdateAsync(Produto produto)
         {
             _dbContext.Produtos.Update(produto);
             await _dbContext.SaveChangesAsync();
             return produto;
         }
+        */
     }
 }

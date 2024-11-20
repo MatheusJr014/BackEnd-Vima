@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VimaV2.Database;
 using VimaV2.Models;
 
@@ -32,5 +33,14 @@ namespace VimaV2.Repositories
         {
             return _dbContext.Usuarios.FirstOrDefault(u => u.Id == id);
         }
+
+        // Método para obter o usuário pelo e-mail
+        public async Task<Usuario> GetByEmailAsync(string email)
+        {
+            return await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+
+
     }
 }

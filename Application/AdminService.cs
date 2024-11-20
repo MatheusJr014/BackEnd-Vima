@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VimaV2.DTOs;
 using VimaV2.Models;
@@ -9,10 +10,12 @@ namespace VimaV2.Services
     public class AdminService
     {
         private readonly AdminRepository _adminRepository;
+        private readonly UsuarioRepository _usuarioRepository; // Repositório de Usuários
 
-        public AdminService(AdminRepository adminRepository)
+        public AdminService(AdminRepository adminRepository, UsuarioRepository usuarioRepository)
         {
             _adminRepository = adminRepository;
+            _usuarioRepository = usuarioRepository; // Injeta o repositório de usuários
         }
 
         // [POST] Criar Produto (somente para Admin)
@@ -45,7 +48,7 @@ namespace VimaV2.Services
         // [PUT] Atualizar Produto (somente para Admin)
         public async Task<ProdutoDTO> UpdateProdutoAsync(int id, ProdutoDTO produtoDTO)
         {
-            var produtoExistente = await _adminRepository.GetProdutoByIdAsync(id); // Usar o método assíncrono
+            var produtoExistente = await _adminRepository.GetProdutoByIdAsync(id);
 
             if (produtoExistente == null)
             {
@@ -76,7 +79,34 @@ namespace VimaV2.Services
         // [DELETE] Deletar Produto (somente para Admin)
         public async Task<bool> DeleteProdutoAsync(int id)
         {
-            return await _adminRepository.DeleteProdutoAsync(id); // Usar método assíncrono
+            return await _adminRepository.DeleteProdutoAsync(id);
         }
+
+        // Método para registrar o Admin
+        // Alteração no AdminService
+        public async Task<UsuarioDTO> RegisterAdminAsync(Usuario usuario)
+        {
+            // Verifique se o administrador já existe pelo e-mail
+            var existingUser = await _usuarioRepository.GetByEmailAsync(usuario.Email);
+            if (existingUser != null)
+            {
+                throw new Exception("E-mail já registrado.");
+            }
+
+      
+            // Cria o administrador e salva no banco
+            await _usuarioRepository.AddAsync(usuario);
+
+            // Retorne o DTO
+            return new UsuarioDTO
+            {
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Role = usuario.Role
+            };
+        }
+
+
+
     }
 }

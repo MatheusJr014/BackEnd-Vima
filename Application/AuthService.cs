@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using VimaV2.DTOs;
 using VimaV2.Repositories;
 using VimaV2.Util;
@@ -43,4 +45,3 @@ namespace VimaV2.Services
         }
     }
 }
-

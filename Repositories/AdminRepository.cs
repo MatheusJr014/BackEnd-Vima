@@ -60,4 +60,12 @@ public class AdminRepository
 
         return false; // Retorna falso se o produto não for encontrado
     }
+
+    public async Task<Usuario> AddAsync(Usuario usuario)
+    {
+        _dbContext.Usuarios.Add(usuario);
+        await _dbContext.SaveChangesAsync();
+        return usuario;
+    }
+
 }

@@ -28,7 +28,8 @@ namespace VimaV2.Controllers
 
 
         // POST: api/produto/criar
-        [HttpPost("criar")]
+        
+        /*[HttpPost("criar")]
         public async Task<IActionResult> CreateProduto([FromBody] ProdutoDTO produtoDTO)
         {
             if (produtoDTO == null)
@@ -48,7 +49,7 @@ namespace VimaV2.Controllers
             throw new NotImplementedException();
         }
 
-
+        */
         //[Get por ID]
         [HttpGet("{id}")]
         public ActionResult<ProdutoDTO> GetProdutoById(int id)
@@ -64,7 +65,7 @@ namespace VimaV2.Controllers
         }
 
         //[DELETE]
-
+        /*
         [HttpDelete("delete/{id}")]
         public IActionResult DeleteProduto(int id)
         {
@@ -93,7 +94,7 @@ namespace VimaV2.Controllers
             {
                 return NotFound("Produto não encontrado.");
             }
-        }
+        }*/
        
     }
 }
