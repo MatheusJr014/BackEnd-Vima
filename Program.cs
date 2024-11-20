@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using VimaV2.Util;
 using VimaV2.Controllers;
 using VimaV2.Services;
 using VimaV2.Repositories;
 using VimaV2.Application;
 using Microsoft.OpenApi.Models;
+using VimaV2.Util;
+using VimaV2.Middleware; // Aqui vamos adicionar o namespace correto para o JwtTokenService
 
 namespace VimaV2
 {
@@ -87,14 +88,25 @@ namespace VimaV2
             builder.Services.AddScoped<AdminRepository>();
             builder.Services.AddScoped<AuthRepository>();
 
-            builder.Services.AddSingleton(provider =>
+
+
+
+        
+
+            // Repositórios
+            builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+         
+
+
+            // Substituir o JwtTools pela nova implementação de JwtTokenService
+            builder.Services.AddSingleton<IJwtTokenService>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
-                return new JwtTools(
+                return new JwtTokenService(
                     configuration["Jwt:Key"],
                     configuration["Jwt:Issuer"],
-                    configuration["Jwt:Audience"],
-                    int.Parse(configuration["Jwt:ExpireHours"])
+                    configuration["Jwt:Audience"]
                 );
             });
 
@@ -130,8 +142,40 @@ namespace VimaV2
                         ValidAudience = configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
                     };
+                    // Eventos personalizados
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnChallenge = context =>
+                        {
+                            // Customizar a resposta ao desafio (quando não autenticado)
+                            context.HandleResponse();
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "application/json";
+                            return context.Response.WriteAsync(new
+                            {
+                                error = "Não autorizado",
+                                message = "Você precisa estar autenticado para acessar este recurso."
+                            }.ToString());
+                        },
+                        OnForbidden = context =>
+                        {
+                            // Customizar a resposta quando autorizado, mas sem permissões
+                            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                            context.Response.ContentType = "application/json";
+                            return context.Response.WriteAsync(new
+                            {
+                                error = "Acesso negado",
+                                message = "Você não tem permissão para acessar este recurso."
+                            }.ToString());
+                        }
+                    };
                 });
 
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+            });
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())

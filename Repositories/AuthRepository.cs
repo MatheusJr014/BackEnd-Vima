@@ -12,10 +12,19 @@ namespace VimaV2.Repositories
         {
             _dbContext = dbContext;
         }
-
         public async Task<Usuario> GetUsuarioByEmailAsync(string email)
         {
-            return await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+            return await _dbContext.Usuarios
+                .Where(u => u.Email == email)
+                .Select(u => new Usuario
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Senha = u.Senha,
+                    Role = u.Role // Certifique-se de incluir o campo Role
+                })
+                .FirstOrDefaultAsync();
         }
+
     }
 }

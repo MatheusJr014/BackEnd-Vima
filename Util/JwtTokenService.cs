@@ -5,36 +5,30 @@ using System.Text;
 
 namespace VimaV2.Util
 {
-    public class JwtTools
+    public class JwtTokenService : IJwtTokenService
     {
         private readonly string _key;
         private readonly string _issuer;
         private readonly string _audience;
-        private readonly int _expireHours;
 
-        public JwtTools(string key, string issuer, string audience, int expireHours)
+        public JwtTokenService(string key, string issuer, string audience)
         {
             _key = key;
             _issuer = issuer;
             _audience = audience;
-            _expireHours = expireHours;
         }
 
-        public string GerarToken(ClaimsIdentity claimsIdentity)
+        public string GenerateToken(ClaimsIdentity claimsIdentity, string role)
         {
-            var claims = claimsIdentity.Claims.ToList();
-
-            // Adiciona role no token (se necessário)
-            var roleClaim = claimsIdentity.FindFirst(ClaimTypes.Role);
-            if (roleClaim != null)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, roleClaim.Value));
-            }
+            // Adicionando a claim 'role' ao ClaimsIdentity
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims),
+                Subject = claimsIdentity,
                 Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = _issuer,
+                Audience = _audience,
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key)),
                     SecurityAlgorithms.HmacSha256Signature)
@@ -44,7 +38,13 @@ namespace VimaV2.Util
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        public ClaimsPrincipal ValidarToken(string token)
+
+        public string GenerateToken(ClaimsIdentity claimsIdentity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ClaimsPrincipal ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_key);

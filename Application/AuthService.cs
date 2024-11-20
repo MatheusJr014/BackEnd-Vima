@@ -10,12 +10,13 @@ namespace VimaV2.Services
     public class AuthService
     {
         private readonly AuthRepository _authRepository;
-        private readonly JwtTools _jwtTools;
+        private readonly IJwtTokenService _jwtTokenService;
 
-        public AuthService(AuthRepository authRepository, JwtTools jwtTools)
+        // Alteração: Injeção de dependência para IJwtTokenService em vez de JwtTools
+        public AuthService(AuthRepository authRepository, IJwtTokenService jwtTokenService)
         {
             _authRepository = authRepository;
-            _jwtTools = jwtTools;
+            _jwtTokenService = jwtTokenService;
         }
 
         public async Task<string> LoginAsync(LoginDTO loginDto)
@@ -25,23 +26,21 @@ namespace VimaV2.Services
                 throw new ArgumentException("Email e senha são obrigatórios.");
             }
 
-            // Busca o usuário pelo e-mail
             var usuario = await _authRepository.GetUsuarioByEmailAsync(loginDto.Email);
 
-            // Verifica se o usuário existe e se a senha corresponde
             if (usuario == null || usuario.Senha != loginDto.Senha)
             {
                 throw new UnauthorizedAccessException("Email ou senha incorretos.");
             }
 
-            // Gera o token apenas para usuários válidos
             var claims = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-                new Claim(ClaimTypes.Role, usuario.Role) // Adiciona a role do usuário
+            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
             });
 
-            return _jwtTools.GerarToken(claims);
+            // Passe o role do usuário ao gerar o token
+            return _jwtTokenService.GenerateToken(claims, usuario.Role);
         }
+
     }
 }

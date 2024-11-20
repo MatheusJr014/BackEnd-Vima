@@ -22,6 +22,8 @@ public class AdminController : ControllerBase
     [HttpPost("product")]
     public async Task<IActionResult> CreateProduct([FromBody] ProdutoDTO produtoDTO)
     {
+        
+        
         if (produtoDTO == null)
         {
             return BadRequest(new { Message = "Dados do produto são obrigatórios." });
@@ -66,33 +68,6 @@ public class AdminController : ControllerBase
     }
 
 
-    [HttpPost("register-admin")]
-    public async Task<IActionResult> RegisterAdmin([FromBody] Usuario usuario)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest("Dados inválidos.");
-        }
-
-        // Define o Role como 'Admin'
-        usuario.Role = "Admin";
-
-        var resultado = await _adminService.RegisterAdminAsync(usuario);
-
-        if (resultado == null)
-        {
-            return BadRequest("Erro ao cadastrar administrador.");
-        }
-
-        return Ok(new { Message = "Administrador cadastrado com sucesso.", Usuario = resultado });
-    }
 
 
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
-    {
-        var token = await _authService.LoginAsync(loginDto);
-        return Ok(new { Token = token });
-    }
 }
