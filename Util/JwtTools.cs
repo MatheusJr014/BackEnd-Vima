@@ -36,7 +36,7 @@ namespace VimaV2.Util
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SECRETO_AQUI")),
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key)),
                     SecurityAlgorithms.HmacSha256Signature)
             };
 
