@@ -37,7 +37,7 @@ namespace VimaV2.Services
 
 
         //[POST] 
-        public async Task<ProdutoDTO> CreateProdutoAsync(ProdutoDTO produtoDTO)
+        /*public async Task<ProdutoDTO> CreateProdutoAsync(ProdutoDTO produtoDTO)
         {
          
             var produto = new Produto
@@ -65,7 +65,7 @@ namespace VimaV2.Services
                 ImageURL = produtoCriado.ImageURL
             };
         }
-
+        */
 
         //[GET POR ID]
 
@@ -95,7 +95,7 @@ namespace VimaV2.Services
             return produtoDTO;
         }
 
-
+        /*
         //[DELETE PRODUTO]
 
         public bool DeleteProduto(int id)
@@ -148,5 +148,6 @@ namespace VimaV2.Services
                 ImageURL = produtoAtualizado.ImageURL
             };
         }
+        */
     }
 }

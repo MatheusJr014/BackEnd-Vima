@@ -35,11 +35,12 @@ namespace VimaV2.Services
             // Gera o token apenas para usuários válidos
             var claims = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.Role, usuario.Role) // Adiciona a role do usuário
             });
 
             return _jwtTools.GerarToken(claims);
         }
-
     }
 }
+

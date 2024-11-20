@@ -14,13 +14,17 @@ namespace VimaV2.Models
         public string Email { get; set; }
         public string Senha { get; set; }
 
+        public string Role {  get; set; }
+
+
         public Usuario() { }
-        public Usuario(string nome, string sobrenome, string email, string senha)
+        public Usuario(string nome, string sobrenome, string email, string senha, string role)
         {
             this.Nome = nome;
             this.Sobrenome = sobrenome;
             this.Email = email;
             this.Senha = senha;
+            Role = role;    
         }
     }
 }

@@ -22,22 +22,28 @@ namespace VimaV2.Util
 
         public string GerarToken(ClaimsIdentity claimsIdentity)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_key);
+            var claims = claimsIdentity.Claims.ToList();
+
+            // Adiciona role no token (se necessário)
+            var roleClaim = claimsIdentity.FindFirst(ClaimTypes.Role);
+            if (roleClaim != null)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, roleClaim.Value));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = claimsIdentity,
-                Expires = DateTime.UtcNow.AddHours(_expireHours),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = _issuer,
-                Audience = _audience
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SECRETO_AQUI")),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
 
+            var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
         public ClaimsPrincipal ValidarToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
