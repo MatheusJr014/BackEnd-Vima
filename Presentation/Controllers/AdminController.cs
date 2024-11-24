@@ -23,23 +23,16 @@ public class AdminController : ControllerBase
     [HttpPost("product")]
     public async Task<IActionResult> CreateProduct([FromBody] ProdutoDTO produtoDTO)
     {
+        // Verificação do ModelState
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState); // Retorna os erros de validação
+        }
+
         if (produtoDTO == null)
         {
             return BadRequest(new { Message = "Dados do produto são obrigatórios." });
         }
-
-        // Verificar se campos obrigatórios estão presentes
-        if (string.IsNullOrWhiteSpace(produtoDTO.Nome))
-        {
-            return BadRequest(new { Message = "O campo 'Nome' é obrigatório." });
-        }
-
-        if (produtoDTO.Preco <= 0)
-        {
-            return BadRequest(new { Message = "O campo 'Preco' deve ser maior que zero." });
-        }
-
-
 
         var produto = new Produto
         {
@@ -47,11 +40,10 @@ public class AdminController : ControllerBase
             Descricao = produtoDTO.Descricao,
             Preco = produtoDTO.Preco,
             Estoque = produtoDTO.Estoque,
-            ImageURL = produtoDTO.ImageURL ?? "default-image-url.jpg", // Defina uma URL padrão caso seja nulo
+            ImageURL = produtoDTO.ImageURL ?? "default-image-url.jpg", // URL padrão
             Tamanhos = produtoDTO.Tamanhos
         };
 
-        // Chama o método AddProdutoAsync do IAdminService
         try
         {
             var produtoCriado = await _adminService.AddProdutoAsync(produto);
@@ -62,6 +54,7 @@ public class AdminController : ControllerBase
             return StatusCode(500, new { Message = "Erro ao criar o produto.", Error = ex.Message });
         }
     }
+
 
     // Endpoint para editar um produto
     [HttpPut("product/{id}")]
