@@ -60,8 +60,11 @@ public class AdminController : ControllerBase
     [HttpPut("product/{id}")]
     public async Task<IActionResult> EditProduct(int id, [FromBody] ProdutoDTO produtoDTO)
     {
-        // Verificar se o corpo da requisição está vazio
-  
+        // Verificação do ModelState
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState); // Retorna os erros de validação
+        }
 
         // Validar campos obrigatórios
         if (string.IsNullOrWhiteSpace(produtoDTO.Nome))
@@ -129,6 +132,12 @@ public class AdminController : ControllerBase
     [HttpDelete("product/{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
+        // Verificação do ModelState antes de continuar com o processamento
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState); // Retorna os erros de validação se o ModelState não for válido
+        }
+
         try
         {
             var sucesso = await _adminService.DeleteProdutoAsync(id);
@@ -145,4 +154,5 @@ public class AdminController : ControllerBase
             return StatusCode(500, new { Message = "Erro ao excluir o produto.", Error = ex.Message });
         }
     }
+
 }
