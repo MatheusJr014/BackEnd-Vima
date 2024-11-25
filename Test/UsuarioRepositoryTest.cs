@@ -98,7 +98,7 @@ namespace Test
             using var context = new VimaV2DbContext(options);
             var repository = new UsuarioRepository(context);
 
-            // Adicione um usuário com todos os campos obrigatórios
+           
             var usuario = new Usuario
             {
                 Nome = "John",
