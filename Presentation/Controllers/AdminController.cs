@@ -60,7 +60,7 @@ public class AdminController : ControllerBase
     [HttpPut("product/{id}")]
     public async Task<IActionResult> EditProduct(int id, [FromBody] ProdutoDTO produtoDTO)
     {
-        // Verificação do ModelState
+        // Verificação do ModelSt kamatheusate
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState); // Retorna os erros de validação
