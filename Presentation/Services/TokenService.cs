@@ -2,44 +2,47 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using VimaV2.Infrastructure.Services; // Referência à interface no Core
 
 namespace VimaV2.Infrastructure.Services
 {
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
+        private readonly string _jwtSecretKey;
 
         public TokenService(IConfiguration configuration)
         {
             _configuration = configuration;
+
+            // Obter a chave secreta de forma segura
+            _jwtSecretKey = GetSecretKeyFromSecureSource();
         }
 
-        // Método para gerar o token com base nas claims passadas
+        private string GetSecretKeyFromSecureSource()
+        {
+            // Tente obter a chave de uma variável de ambiente
+            var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new ArgumentException("JWT_SECRET_KEY não foi configurada corretamente.");
+            }
+
+            return secretKey;
+        }
+
         public string GenerateToken(ClaimsIdentity claimsIdentity, string role)
         {
-            // Adicionando a claim 'role' ao ClaimsIdentity
             claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
 
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Lê a chave de configuração
-            var key = _configuration["Jwt:SECRET_KEY"];
-
-            // Verifica se a chave SECRET_KEY está configurada corretamente
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentException("Jwt:SECRET_KEY não foi configurada corretamente.");
-            }
-
-            var keyBytes = Encoding.UTF8.GetBytes(key);
+            var keyBytes = Encoding.UTF8.GetBytes(_jwtSecretKey);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claimsIdentity,
-                Expires = DateTime.UtcNow.AddHours(1), // Defina o tempo de expiração do token conforme necessário
-                Issuer = _configuration["Jwt:Issuer"], // Lê o Issuer do appsettings.json
-                Audience = _configuration["Jwt:Audience"], // Lê o Audience do appsettings.json
+                Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(keyBytes),
                     SecurityAlgorithms.HmacSha256Signature)
@@ -49,28 +52,17 @@ namespace VimaV2.Infrastructure.Services
             return tokenHandler.WriteToken(token);
         }
 
-        // Método para gerar o token sem adicionar a role
         public string GenerateToken(ClaimsIdentity claims)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Lê a chave de configuração
-            var key = _configuration["Jwt:SECRET_KEY"];
-
-            // Verifica se a chave SECRET_KEY está configurada corretamente
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentException("Jwt:SECRET_KEY não foi configurada corretamente.");
-            }
-
-            var keyBytes = Encoding.UTF8.GetBytes(key);
+            var keyBytes = Encoding.UTF8.GetBytes(_jwtSecretKey);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddHours(1), // Defina o tempo de expiração do token conforme necessário
-                Issuer = _configuration["Jwt:Issuer"], // Lê o Issuer do appsettings.json
-                Audience = _configuration["Jwt:Audience"], // Lê o Audience do appsettings.json
+                Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(keyBytes),
                     SecurityAlgorithms.HmacSha256Signature)
@@ -80,21 +72,10 @@ namespace VimaV2.Infrastructure.Services
             return tokenHandler.WriteToken(token);
         }
 
-        // Método para validar o token
         public ClaimsPrincipal ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Lê a chave de configuração
-            var key = _configuration["Jwt:SECRET_KEY"];
-
-            // Verifica se a chave SECRET_KEY está configurada corretamente
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentException("Jwt:SECRET_KEY não foi configurada corretamente.");
-            }
-
-            var keyBytes = Encoding.ASCII.GetBytes(key);
+            var keyBytes = Encoding.ASCII.GetBytes(_jwtSecretKey);
 
             try
             {
@@ -104,8 +85,8 @@ namespace VimaV2.Infrastructure.Services
                     IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"], // Lê o Issuer do appsettings.json
-                    ValidAudience = _configuration["Jwt:Audience"], // Lê o Audience do appsettings.json
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidAudience = _configuration["Jwt:Audience"],
                     ClockSkew = TimeSpan.Zero
                 }, out _);
             }
