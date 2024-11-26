@@ -107,8 +107,7 @@ namespace VimaV2.Infrastructure.Services
             {
                 return tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                    ValidateIssuerSigningKey = false,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidIssuer = _configuration["Jwt:Issuer"], // Lê o Issuer do appsettings.json
