@@ -62,7 +62,7 @@ namespace VimaV2.Infrastructure.Services
             var tokenHandler = new JwtSecurityTokenHandler();
 
             // Lê a chave de configuração
-            var key = _configuration["Jwt:SECRET_KEY"];
+            var key = _configuration[_secretKey];
 
             // Verifica se a chave SECRET_KEY está configurada corretamente
             if (string.IsNullOrEmpty(key))
@@ -93,7 +93,7 @@ namespace VimaV2.Infrastructure.Services
             var tokenHandler = new JwtSecurityTokenHandler();
 
             // Lê a chave de configuração
-            var key = _configuration["Jwt:SECRET_KEY"];
+            var key = _configuration[_secretKey];
 
             // Verifica se a chave SECRET_KEY está configurada corretamente
             if (string.IsNullOrEmpty(key))
