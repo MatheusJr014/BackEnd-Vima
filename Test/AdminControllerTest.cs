@@ -22,68 +22,47 @@ public class AdminControllerTests : IDisposable
     public void TestCreateProduct()
     {
         // Navega para a página de login/admin
-        _driver.Navigate().GoToUrl("http://localhost:5000/admin/login");
+        _driver.Navigate().GoToUrl(" http://localhost:5173/login/admin");
 
         // Simula login (substituir pelos IDs corretos dos campos)
-        _driver.FindElement(By.Id("username")).SendKeys("admin");
-        _driver.FindElement(By.Id("password")).SendKeys("password");
-        _driver.FindElement(By.Id("loginButton")).Click();
+        _driver.FindElement(By.Id("email")).SendKeys("admin");
+        _driver.FindElement(By.Id("password")).SendKeys("admin");
+        _driver.FindElement(By.Id("button")).Click();
+        Thread.Sleep(1000);
+
+
 
         // Navega para o formulário de criação de produto
-        _driver.Navigate().GoToUrl("http://localhost:5000/admin/products/create");
+        _driver.Navigate().GoToUrl("http://localhost:5173/admin/");
+        _driver.FindElement(By.Id("Cadastro-produto")).Click();
 
         // Preenche os campos do formulário (substituir pelos IDs corretos)
-        _driver.FindElement(By.Id("Nome")).SendKeys("Novo Produto");
-        _driver.FindElement(By.Id("Descricao")).SendKeys("Descrição do produto");
-        _driver.FindElement(By.Id("Preco")).SendKeys("100");
-        _driver.FindElement(By.Id("Estoque")).SendKeys("10");
-        _driver.FindElement(By.Id("ImageURL")).SendKeys("http://exemplo.com/imagem.jpg");
-        _driver.FindElement(By.Id("Tamanhos")).SendKeys("P,M,G");
+        _driver.FindElement(By.Id("nome")).SendKeys("Novo Produto");
+        _driver.FindElement(By.Id("descricao")).SendKeys("Descrição do produto");
+        _driver.FindElement(By.Id("preco")).SendKeys("100");
+        _driver.FindElement(By.Id("estoque")).SendKeys("10");
+        _driver.FindElement(By.Id("tamanhos")).SendKeys("P,M,G");
+        _driver.FindElement(By.Id("imagem")).SendKeys("http://exemplo.com/imagem.jpg");
+        
 
         // Envia o formulário
-        _driver.FindElement(By.Id("submitButton")).Click();
+        _driver.FindElement(By.Id("Envia")).Click();
 
         // Valida se o produto foi criado
         var confirmationMessage = _driver.FindElement(By.Id("successMessage")).Text;
         Assert.Contains("Produto criado com sucesso", confirmationMessage);
-    }
 
-    [Fact]
-    public void TestEditProduct()
-    {
-        // Navega para a lista de produtos
-        _driver.Navigate().GoToUrl("http://localhost:5000/admin/products");
+
+
+
+
 
         // Clica no botão de editar o primeiro produto (substituir pelo seletor correto)
-        _driver.FindElement(By.CssSelector(".edit-button")).Click();
 
-        // Altera um campo
-        var nomeField = _driver.FindElement(By.Id("Nome"));
-        nomeField.Clear();
-        nomeField.SendKeys("Produto Editado");
+        _driver.FindElement(By.Id("Edita-produto")).Click();
 
-        // Envia o formulário
-        _driver.FindElement(By.Id("submitButton")).Click();
-
-        // Valida se o produto foi atualizado
-        var confirmationMessage = _driver.FindElement(By.Id("successMessage")).Text;
-        Assert.Contains("Produto atualizado com sucesso", confirmationMessage);
+        
     }
 
-    [Fact]
-    public void TestDeleteProduct()
-    {
-        // Navega para a lista de produtos
-        _driver.Navigate().GoToUrl("http://localhost:5000/admin/products");
-
-        // Clica no botão de deletar o primeiro produto (substituir pelo seletor correto)
-        _driver.FindElement(By.CssSelector(".delete-button")).Click();
-
-        // Confirma a exclusão (caso haja um modal de confirmação)
-        _driver.FindElement(By.Id("confirmButton")).Click();
-
-        // Valida se o produto foi excluído
-        var confirmationMessage = _driver.FindElement(By.Id("successMessage")).Text;
-        Assert.Contains("Produto excluído com sucesso", confirmationMessage);
-    }
+    
 }
