@@ -38,9 +38,11 @@ namespace VimaV2.Services
 
             var claims = new ClaimsIdentity(new[]
             {
-                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                 new Claim(ClaimTypes.Name, usuario.Email),
-                new Claim(ClaimTypes.Role, usuario.Role)
+                new Claim(ClaimTypes.Role, usuario.Role),
+                new Claim("nome", usuario.Nome),         
+                new Claim("sobrenome", usuario.Sobrenome)
              });
 
             return _tokenService.GenerateToken(claims);
