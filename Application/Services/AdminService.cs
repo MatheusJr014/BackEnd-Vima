@@ -35,10 +35,39 @@ namespace VimaV2.Services
         }
 
         // Adiciona um novo produto
-        public async Task<Produto> AddProdutoAsync(Produto produto)
+        public async Task<Produto> AddProdutoAsync(ProdutoDTO produtoDTO)
         {
-            // Configura URL de imagem padrão, se necessário
-            produto.ImageURL ??= "default-image-url.jpg";
+            // Validação da camada de serviço
+            if (string.IsNullOrWhiteSpace(produtoDTO.Nome))
+            {
+                throw new ArgumentException("O campo 'Nome' é obrigatório.");
+            }
+
+            if (produtoDTO.Preco <= 0)
+            {
+                throw new ArgumentException("O campo 'Preco' deve ser maior que zero.");
+            }
+
+            if (produtoDTO.Estoque <= 0)
+            {
+                throw new ArgumentException("O campo 'Estoque' deve ser maior que zero.");
+            }
+
+            if (produtoDTO.Tamanhos == null || produtoDTO.Tamanhos.Count == 0)
+            {
+                throw new ArgumentException("O campo 'Tamanhos' não pode ser vazio.");
+            }
+
+            // Mapeamento de ProdutoDTO para Produto
+            var produto = new Produto
+            {
+                Nome = produtoDTO.Nome,
+                Descricao = produtoDTO.Descricao,
+                Preco = produtoDTO.Preco,
+                Estoque = produtoDTO.Estoque,
+                ImageURL = produtoDTO.ImageURL ?? "default-image-url.jpg",  // Se não houver imagem, configura a URL padrão
+                Tamanhos = produtoDTO.Tamanhos
+            };
 
             return await _adminRepository.AddAsync(produto);
         }
@@ -100,7 +129,19 @@ namespace VimaV2.Services
         // Adiciona um novo usuário
         public async Task<Usuario> AddUsuarioAsync(Usuario usuario)
         {
+            // Validação de usuário, se necessário
+            if (usuario == null)
+            {
+                throw new ArgumentException("Dados do usuário são obrigatórios.");
+            }
+
+            // Adiciona o usuário no repositório
             return await _adminRepository.AddAsync(usuario);
+        }
+
+        public Task<Produto> AddProdutoAsync(Produto produto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

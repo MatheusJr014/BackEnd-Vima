@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using VimaV2.DTOs;
-using VimaV2.Models;
 using VimaV2.Services;
+using System;
 
 namespace VimaV2.Controllers
 {
@@ -28,25 +28,15 @@ namespace VimaV2.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (produtoDTO == null)
-            {
-                return BadRequest(new { Message = "Dados do produto são obrigatórios." });
-            }
-
             try
             {
-                var produto = new Produto
-                {
-                    Nome = produtoDTO.Nome,
-                    Descricao = produtoDTO.Descricao,
-                    Preco = produtoDTO.Preco,
-                    Estoque = produtoDTO.Estoque,
-                    ImageURL = produtoDTO.ImageURL,
-                    Tamanhos = produtoDTO.Tamanhos
-                };
-
-                var produtoCriado = await _adminService.AddProdutoAsync(produto);
+                // Chama o serviço para adicionar o produto
+                var produtoCriado = await _adminService.AddProdutoAsync(produtoDTO);
                 return Ok(new { Message = "Produto criado com sucesso.", Produto = produtoCriado });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -65,6 +55,7 @@ namespace VimaV2.Controllers
 
             try
             {
+                // Chama o serviço para atualizar o produto
                 var produtoAtualizado = await _adminService.UpdateProdutoAsync(id, produtoDTO);
                 return Ok(new { Message = "Produto atualizado com sucesso.", Produto = produtoAtualizado });
             }
@@ -88,6 +79,7 @@ namespace VimaV2.Controllers
         {
             try
             {
+                // Chama o serviço para excluir o produto
                 var sucesso = await _adminService.DeleteProdutoAsync(id);
 
                 if (sucesso)
